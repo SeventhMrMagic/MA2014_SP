@@ -6,11 +6,14 @@ editor: source
 
 ## Quarto
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+##Queries
+###¿Existe diferencia en la percepción sobre la rapidez del transporte público entre las personas que viven en municipios capitales y aquellas que viven en localidades rurales?
+###¿Mayor escolaridad se asocia a mejor percepción de eficiencia del transporte público?
+###¿Cómo cambia la percepción de eficiencia del transporte público entre la gente que transita en él y la gente que no?
+###¿La condición física de una persona impacta en la frecuencia del uso de automóvil en las grandes ciudades?
+
 
 ## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
 
 ```{r}
 #| eval: False
@@ -21,7 +24,21 @@ install.packages('tinytex')
 You can add options to executable code like this
 
 ```{r}
-
+data = read.csv("Data/enmt_unam.csv")
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+```{r}
+head(data)
+```
+
+
+
+
+
+
+
+
+
+
+
+

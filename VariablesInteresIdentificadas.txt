@@ -1,15 +1,45 @@
 ###¿Existe diferencia en la percepción sobre la rapidez del transporte público entre las personas que viven en municipios capitales y aquellas que viven en localidades rurales?
-Variables Rapidez Transporte público
-	P1c_2_1 = Rapidez Tren urbano
-	P1c_3_1 = Rapidez Tranvia, Trolebus
-	P1c_4_1 = Rapidez Camion/microbus
-	P1c_7_1 = Rapidez Metrobus
-	#Posible variable
-	P16
-Variable Tamaño de localidad
-	Tam_loc = Habitantes de localidad
-	Region = Region
-Variable
-
+	Variables Rapidez Transporte público
+		P1c_2_1 = Rapidez Tren urbano
+		P1c_3_1 = Rapidez Tranvia, Trolebus
+		P1c_4_1 = Rapidez Camion/microbus
+		P1c_7_1 = Rapidez Metrobus
+		p17_2 = Velocidad del transporte publico
+	#Posible variable de rapidez
+		P16 = Mejor medio de transporte
+	Variable Tamaño de localidad
+		Tam_loc = Habitantes de localidad
+		Region = Region
 
 ###¿Mayor escolaridad se asocia a mejor percepción de eficiencia del transporte público?
+	Variable Escolaridad
+		escol = Nivel de educacion
+	Variable eficiencia
+		p17_1 = Eficiencia del transporte publico
+
+###¿Cómo cambia la percepción de eficiencia del transporte público entre la gente que transita en él y la gente que no?
+	p17_1 = Eficiencia del transporte publico
+	p1a_12 = Frecuencia Automovil particular
+	Variable Frecuencia Transporte público
+		p1a_2 = Tren urbano
+		p1a_3 = Tranvia
+		p1a_4 = Camion/microbus
+		p1a_7 = Metrobus
+
+###¿La condición física de una persona impacta en la frecuencia del uso de automóvil en las grandes ciudades?
+	p1a_12
+	Tam_loc
+	p12a_1 = Razon para reducir uso de automóvil (incapacidad)
+
+Region es Variable independiente	
+Ingreso individual es independiente
+
+DAGs
+	1.
+		Tam_loc | Region
+		Ing_fam | ing_fam
+		Escol | Region, ing_fam
+		
+
+
+
