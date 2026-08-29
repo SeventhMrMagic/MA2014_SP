@@ -1,0 +1,15 @@
+###¿Existe diferencia en la percepción sobre la rapidez del transporte público entre las personas que viven en municipios capitales y aquellas que viven en localidades rurales?
+Variables Rapidez Transporte público
+	P1c_2_1 = Rapidez Tren urbano
+	P1c_3_1 = Rapidez Tranvia, Trolebus
+	P1c_4_1 = Rapidez Camion/microbus
+	P1c_7_1 = Rapidez Metrobus
+	#Posible variable
+	P16
+Variable Tamaño de localidad
+	Tam_loc = Habitantes de localidad
+	Region = Region
+Variable
+
+
+###¿Mayor escolaridad se asocia a mejor percepción de eficiencia del transporte público?
