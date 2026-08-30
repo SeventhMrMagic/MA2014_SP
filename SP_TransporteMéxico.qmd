@@ -21,15 +21,190 @@ editor: source
 install.packages('tinytex')
 ```
 
+```{r}
+#| eval: False
+#| echo: False
+library(bnlearn)
+```
+
+
 You can add options to executable code like this
 
 ```{r}
-data = read.csv("Data/enmt_unam.csv")
+data = read.csv("Data/enmt_unam.csv", stringsAsFactors = TRUE)
+text_dataset <- as.data.frame(lapply(data, as.factor))
+text_dataset$p25_3_3 <- NULL
+for (col in names(text_dataset)) {
+  if (length(unique(text_dataset[[col]])) == 1) {
+    text_dataset[[col]] <- NULL
+  }
+}
+
+
 ```
 
 ```{r}
-head(data)
+head(text_dataset)
 ```
+###Propongan al menos 3 diferentes DAGs que representen las relaciones de dependencia entre todas las variables de interés.
+```{r}
+dag1 = empty.graph(nodes = c("p12a_1","Region","h21_1","ing_ind","Tam_loc","ing_fam","escol", "p1c_2_1", "p1c_3_1", "p1c_4_1","p1c_7_1", "p17_1", "p1a_2", "p1a_3", "p1a_4", "p1a_7", "p1a_12"))
+
+arc_set1= matrix(c("p12a_1","p1a_2", 
+                  "p12a_1","p1a_3",
+                  "p12a_1","p1a_4",
+                  "p12a_1","p1a_7",
+                  "p12a_1","p1a_12",
+                  "Region", "Tam_loc",
+                  "Region", "escol",
+                  "h21_1", "ing_ind",
+                  "ing_ind", "ing_fam", 
+                  "Tam_loc", "p1c_2_1",
+                  "Tam_loc", "p1c_3_1",
+                  "Tam_loc", "p1c_4_1",
+                  "Tam_loc", "p1c_7_1",
+                  "p1c_2_1", "p17_1",
+                  "p1c_3_1", "p17_1",
+                  "p1c_4_1", "p17_1",
+                  "p1c_7_1", "p17_1",
+                  "ing_fam", "escol",
+                  "ing_fam", "p1a_2", 
+                  "ing_fam", "p1a_3",
+                  "ing_fam", "p1a_4",
+                  "ing_fam", "p1a_7",
+                  "ing_fam", "p1a_12"),
+                byrow = TRUE, ncol = 2,
+                dimnames = list(NULL, c("from", "to")))
+
+```
+
+```{r}
+  arcs(dag1)=arc_set1
+```
+
+```{r}
+graphviz.plot(dag1, shape = "ellipse")
+```
+
+```{r}
+dag2 = empty.graph(nodes = c("p12a_1","Region","h21_1","ing_ind","Tam_loc","muni","escol", "p1c_2_1", "p1c_3_1", "p1c_4_1","p1c_7_1", "p17_1", "p1a_2", "p1a_3", "p1a_4", "p1a_7", "p1a_12"))
+
+arc_set2= matrix(c("p12a_1","p1a_2",
+                  "p12a_1","p1a_3",
+                  "p12a_1","p1a_4",
+                  "p12a_1","p1a_7",
+                  "p12a_1","p1a_12",
+                  "muni", "Region",
+                  "Region", "h21_1",
+                  "Region", "escol",
+                  "muni", "ing_ind",
+                  "muni", "Tam_loc",
+                  "h21_1", "ing_ind",
+                  "ing_ind", "p1c_2_1",
+                  "ing_ind", "p1c_3_1",
+                  "ing_ind", "p1c_4_1",
+                  "ing_ind", "p1c_7_1",
+                  "ing_ind", "p17_1",
+                  "muni", "p17_1",
+                  "muni", "escol",
+                  "muni", "p1a_2", 
+                  "muni", "p1a_3",
+                  "muni", "p1a_4",
+                  "muni", "p1a_7",
+                  "muni", "p1a_12"),
+                byrow = TRUE, ncol = 2,
+                dimnames = list(NULL, c("from", "to")))
+```
+
+```{r}
+arcs(dag2) = arc_set2
+graphviz.plot(dag2, shape = "ellipse")
+
+```
+
+```{r}
+dag3 = empty.graph(nodes = c("p12a_1","Region","h21_1","Tam_loc","escol", "p1c_2_1", "p1c_3_1", "p1c_4_1","p1c_7_1", "p17_1", "p1a_2", "p1a_3", "p1a_4", "p1a_7", "p1a_12"))
+
+arc_set3= matrix(c("h21_1","escol",
+                  "Region","escol",
+                  "Region","Tam_loc",
+                  "Region","p1c_2_1",
+                  "Region","p1c_3_1",
+                  "Region","p1c_4_1",
+                  "Region","p1c_7_1",
+                  "escol", "p17_1",
+                  "escol", "p12a_1",
+                  "Tam_loc", "p1a_2",
+                  "Tam_loc", "p1a_3",
+                  "Tam_loc", "p1a_4",
+                  "Tam_loc", "p1a_7",
+                  "Tam_loc", "p1a_12",
+                  "p12a_1", "p1a_2",
+                  "p12a_1", "p1a_3",
+                  "p12a_1", "p1a_4",
+                  "p12a_1", "p1a_7",
+                  "p12a_1", "p1a_12",
+                  "p12a_1","p1a_12"),
+                byrow = TRUE, ncol = 2,
+                dimnames = list(NULL, c("from", "to")))
+```
+
+```{r}
+arcs(dag3) = arc_set3
+graphviz.plot(dag3)
+```
+
+###Construyan una red bayesiana utilizando las DAGs que propusieron previamente.
+####Red Bayesiana 1:
+
+```{r}
+var1 = c("p12a_1","Region","h21_1","ing_ind","Tam_loc","ing_fam","escol", "p1c_2_1", "p1c_3_1", "p1c_4_1","p1c_7_1", "p17_1", "p1a_2", "p1a_3", "p1a_4", "p1a_7", "p1a_12")
+clean_data1 = text_dataset
+for (col in names(text_dataset)) {
+  if (!(col %in% var1)) {
+    clean_data1[[col]] <- NULL
+  }
+}
+clean_data1
+bn_fit1 = bn.fit(dag1, data = clean_data1, method = "mle")
+```
+
+####Red Bayesiana 2:
+
+```{r}
+var2 = c("p12a_1","Region","h21_1","ing_ind","Tam_loc","muni","escol", "p1c_2_1", "p1c_3_1", "p1c_4_1","p1c_7_1", "p17_1", "p1a_2", "p1a_3", "p1a_4", "p1a_7", "p1a_12")
+clean_data2 = text_dataset
+for (col in names(text_dataset)) {
+  if (!(col %in% var2)) {
+    clean_data2[[col]] <- NULL
+  }
+}
+bn_fit2 = bn.fit(dag2, data = clean_data2, method = "mle")
+```
+
+####Red bayesiana 3:
+```{r}
+var3 = c("p12a_1","Region","h21_1","Tam_loc","escol", "p1c_2_1", "p1c_3_1", "p1c_4_1","p1c_7_1", "p17_1", "p1a_2", "p1a_3", "p1a_4", "p1a_7", "p1a_12")
+clean_data3 = text_dataset
+for (col in names(text_dataset)) {
+  if (!(col %in% var3)) {
+    clean_data3[[col]] <- NULL
+  }
+}
+bn_fit3 = bn.fit(dag3, data = clean_data3, method = "mle")
+```
+
+
+###¿Cuál es la red que mejor se ajusta a sus datos? ¿Por qué?
+
+```{r}
+score(dag1, data = clean_data1, type = "BIC")
+score(dag1, data = clean-data1, type = "AIC")
+```
+
+
+
+
 
 
 
