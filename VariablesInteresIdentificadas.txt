@@ -37,7 +37,8 @@ Ingreso individual es independiente
 DAGs
 	1.
 		p12a_1 ⫫
-		Region ⫫
+		mun ⫫
+		Region | Mun
 		h21_1 ⫫
 		ing_ind | h21_1
 		Tam_loc | Region
@@ -61,7 +62,10 @@ DAGs
 
 	3. 
 		h21_1 ⫫
-		region ⫫
+		mun ⫫
+		region | mun
+		ing_ind | h21_1
+		ing_fam | ing_ind
 		p12a_1 | h21_1
 		escol | region, h21_1
 		Tam_loc | region
