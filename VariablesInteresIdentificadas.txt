@@ -45,9 +45,28 @@ DAGs
 		Escol | Region, ing_fam
 		P1c_2_1, P1c_3_1, P1c_4_1, P1c_7_1 | Tam_loc
 		P17_1 | P1c_2_1, P1c_3_1, P1c_4_1, P1c_7_1
-		p1a_2, p1a_3, p4a_4, p1a_7, p1a_12 | ing_fam
+		p1a_2, p1a_3, p4a_4, p1a_7, p1a_12 | ing_fam, p12a_1
+
 	2.
-		
+		Mun ⫫
+		Region | Mun
+		h21_1 | Region
+		escol | p1a_12, P17_1, region
+		ing_ind | Mun, h21_1
+		Tam_loc | Mun, ing_ind
+		P1c_2_1, P1c_3_1, P1c_4_1, P1c_7_1 | ing_ind
+		P17_1 | ing ind, Mun
+		p1a_2, p1a_3, p4a_4, p1a_7, p1a_12 | Mun, Tam_loc
+
+	3. 
+		h21_1 ⫫
+		region ⫫
+		p12a_1 | h21_1
+		escol | region, h21_1
+		Tam_loc | region
+		P1c_2_1, P1c_3_1, P1c_4_1, P1c_7_1 | region
+		P17_1 | escol, p12a_1
+		p1a_2, p1a_3, p4a_4, p1a_7, p1a_12 | Tam_loc
 
 
 

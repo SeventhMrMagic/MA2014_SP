@@ -1,4 +1,4 @@
 Un pequeño directorio del trabajo
- -  SP_TransporteMéxico.qmd es el archivode quarto principal
+ -  SP_TransporteMéxico.qmd es el archivo de quarto principal
  -  VariablesInteresIdentificadas.txt es solo texto que agrupa las variables que se usarán para las queries
  -  Data/ es donde guardaremos toda la bases de datos que utilicemos (sea si usamos particiones de la original)
