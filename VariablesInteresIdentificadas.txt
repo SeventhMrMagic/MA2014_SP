@@ -36,9 +36,17 @@ Ingreso individual es independiente
 
 DAGs
 	1.
+		p12a_1 ⫫
+		Region ⫫
+		h21_1 ⫫
+		ing_ind | h21_1
 		Tam_loc | Region
-		Ing_fam | ing_fam
+		Ing_fam | ing_ind
 		Escol | Region, ing_fam
+		P1c_2_1, P1c_3_1, P1c_4_1, P1c_7_1 | Tam_loc
+		P17_1 | P1c_2_1, P1c_3_1, P1c_4_1, P1c_7_1
+		p1a_2, p1a_3, p4a_4, p1a_7, p1a_12 | ing_fam
+	2.
 		
 
 
