@@ -12,7 +12,7 @@
 \usepackage{amsmath,amssymb}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 
-
+\usepackage{fontspec}
 \usepackage{unicode-math}
 
 % Fuente principal
@@ -166,11 +166,17 @@
 
 
 % Bibliography setup
-\usepackage[backend=biber]{biblatex}
+\usepackage[
+  backend=biber,
+  style=apa,
+  sorting=nyt
+]{biblatex}
 
 \addbibresource{references.bib}
-\bibliographystyle{plain}
 
+
+
+\addbibresource{references.bib}
 
 
 
@@ -188,9 +194,9 @@ Julio Lizárraga Beltrán
 
 
 \date{30/08/2026}
-
 \begin{document}
 \maketitle
+
 
 
 \begin{abstract}
@@ -211,44 +217,272 @@ negativamente a la eficiencia y/o percepción de estos medios de transporte,
 y por lo tanto, a su uso.
 
 El efecto que tienen estos factores categóricos, cómo la edad, el sexo, la 
-escolaridad, el ingreso y el tamaño de la localidad tienen sobre el medio de 
-transporte que optan por utilizar los mexicanos, la importancia de la seguridad 
-en el medio de transporte y la utilización de esta información para la planificación 
+escolaridad, el ingreso, el tamaño de la localidad y la interacción 
+de estas variables entre si sobre el medio de transporte que optan por 
+utilizar los mexicanos, la importancia de la seguridad en el medio 
+de transporte y la utilización de esta información para la planificación  
 urbana han sido estudiados y confirmados previamente:
 
-\cite{Harbering2020} y \cite{BautistaHernandez2021} 
+Harbering y Schl{\"u}ter estudiaron los factores que afectan la desición en el medio 
+de transporte elegido en el Valle de México, mostrando la relevancia de factores 
+socioeconómicos y geográficos en las decisiones del medio de tranporte. \cite{Harbering2020}. 
+De manera similar, Bautista-Hernández analizó la relación entre las características 
+del entorno urbano y la selección de distintos medios de transporte en la Ciudad 
+de México y encontraron factores relacionados con las variables socioeconómicas 
+y la distancia al centro urbano.
+\cite{BautistaHernandez2021}.
 
-\cite{Moreno2023}
+Moreno et al. estudiaron patrones de movilidad sostenible en el Área Metropolitana 
+de Monterrey y encontraron que los hombres son más propensos a utilizar 
+medios de transporte no sostenibles que las mujeres, entre otras cosas.
+\cite{Moreno2023}, mientras que Obregón Biosca et al. analizaron la elección 
+del medio de transporte entre zonas urbanas y periurbanas y concluyeron que 
+los ingresos de los usuarios son una de las variables más significativas en 
+la elección del medio de transporte en ambas zonas \cite{ObregonBiosca2018}. 
+Estos antecedentes muestran que la movilidad depende de múltiples características que 
+interactúan entre sí.
 
-\cite{ObregonBiosca2018}
+Si bien la literatura previa muestra la clara relevancia de estas 
+variables en el medio de transporte mexicano, la mayoría usan análisis
+con una variable de salida y varios de entrada, ese método es efectivo, 
+pero no encapsula del todo la complejidad de la interacción de estas 
+variables entre si, por lo que este trabajo propone un modelo que 
+pueda considerar la complejidad de la situación utilizando una Red Bayesiana 
+Multinomial (RBM).
 
+Las RBM son modelos probabilísticos que permiten mostrar las relaciones 
+de causalidad entre distintas variable categóricas utilizando un 
+grafo acíclico dirigido (DAG). La RBM resulta útil para este 
+tipo de situaciones, donde el medio de transporte es afectado por 
+la interacción de varios factores que normalmente no son independientes.
+
+En este trabajo se utilizan datos de la Encuesta Nacional de Movilidad y Transporte (ENMT) 
+para construir una RBM mediante el paquete \texttt{bnlearn} 
+del lenguaje de programación R. El modelo busca analizar las relaciones probabilísticas 
+entre distintas características de la población mexicana, los medios de transporte 
+utilizados y variables relacionadas con la eficiencia y seguridad del transporte. 
+Posterior a ello se realizaron cuatro consultas probabilísticas orientadas 
+a estudiar cómo determinadas características demográficas, económicas y geográficas 
+modifican la probabilidad de utilizar ciertos medios de transporte y la percepción 
+de sus condiciones de seguridad y eficiencia.
+
+El objetivo de este análisis Conocer los medios de transporte utilizados en México, 
+así como la eficiencia y seguridad del transporte público. Y contar con evidencia 
+que ayude a desarrollar políticas sobre planificación urbana.
 
 \section{Metodología}\label{Metodología}
-\subsection{Enfoque y tipo de estudio}
-Se empleó un enfoque cuantitativo, no experimental, basado en el uso de redes bayesianas (grafos acíclicos dirigidos, DAG) para encontrar las relaciones de dependencia probabilística entre variables sociodemográficas, geográficas y de percepción sobre el transporte.
-
-\subsection{Fuente de datos}
-El Instituto de Investigaciones Jurídicas de la UNAM realizó la Encuesta Nacional de Movilidad y Transporte. Esta encuesta nacional fue la base de datos que utilizamos, la encuesta cuenta con aproximadamente 1200 respuestas de distintas partes del pais. Entre las variables relevantes para este estdio se  encuentran región (\texttt{Region}), tamaño de localidad (\texttt{Tam\_loc}), escolaridad (\texttt{escol}), ingreso individual y familiar (\texttt{ing\_ind}, \texttt{ing\_fam}), ocupación (\texttt{h21\_1}), frecuencia de uso por modo de transporte (\texttt{p1a\_*}), calificación de rapidez por modo (\texttt{p1c\_*\_1}), motivo de abandono del automóvil (\texttt{p12a\_1}) y percepción de eficiencia del transporte público (\texttt{p17\_1}).
-
-\subsection{Herramientas}
-El análisis se realizó en \texttt{RStudio} mediante un documento Quarto, utilizando los paquetes \texttt{bnlearn} y \texttt{dplyr} de R.
-
-\subsection{Preprocesamiento}
-Las variables continuas de ingreso y rapidez fueron recodificadas en categorías binarias con base en la media de las respuestas válidas, tratando como no respuesta los valores atípicos. Se construyó la variable \texttt{preferencia}, correspondiente al modo de transporte más utilizado por cada persona, y se convirtió el conjunto de datos a variables categóricas (\texttt{factor}) para su análisis con redes bayesianas.
-
-\subsection{Construcción y selección del modelo global}
-Se propusieron tres DAGs alternativos que representan distintas hipótesis de dependencia entre las variables de interés. Cada red fue ajustada utilizando la funcion de bnlearn \texttt{bn.fit()} y evaluada con los criterios de información BIC y AIC mediante (\texttt{score()}), además de una validación estructural con el algoritmo de aprendizaje \textit{hill-climbing} (\texttt{hc()}) del paquete bnlearn, seleccionando la estructura con mejor ajuste
-a los datos, dentro de Rstudio se trata del valor menos negativo.
-
-\subsection{Estrategia analítica por pregunta de investigación}
-Para cada pregunta se utilizo un DAG distinto tomando en cuenta lo que nos interesaba saber, se ajstaron con \texttt{bn.fit()} y se encontraron probabilidades condicionales con \texttt{cpquery()} (utilizando una \(n=10^{6}\) y verificado con ponderación por
-verosimilitud, \texttt{method="lw"}).
 
 \section{Aplicación}\label{Aplicación}
 
+\subsection{Descripción y preparación de los datos}
+
+Para el análisis se utilizaron variables relacionadas 
+con características demográficas y socioeconómicas de los participantes, tamaño de 
+la localidad, región, escolaridad, ingreso, condición física, frecuencia de uso de 
+distintos medios de transporte y percepción de su eficiencia.
+
+Previo a la construcción de las redes se realizó un proceso de limpieza y 
+transformación de los datos. Las variables de interés fueron convertidas a factores y 
+algunas variables numéricas fueron recodificadas en categóricas para poder 
+realizar el análisis multinomial.Adicionalmente, se creó una variable denominada 
+\texttt{preferencia}, construida 
+a partir de la frecuencia reportada de uso de diferentes medios de transporte. 
+Esta variable permitió resumir la información de varias preguntas de la encuesta.
+
+\subsection{Construcción y comparación de las redes bayesianas}
+
+A partir de las variables seleccionadas se propusieron tres DAG.  
+Los DAG propuestos presentan diferentes hipótesis respecto a la dirección y 
+dependencia entre las variables. El primer modelo prioriza relaciones entre región, 
+tamaño de localidad, ingreso, escolaridad y variables relacionadas con el transporte. 
+El segundo incorpora una mayor influencia del tipo de municipio y del ingreso 
+individual. El tercer modelo propone una estructura más tranquila, en la que 
+la región, escolaridad, tamaño de localidad y condición física funcionan como 
+variables relevantes para explicar los patrones de movilidad observados.
+
+\begin{figure}[H]
+    \centering
+
+    \begin{subfigure}[b]{0.31\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{DAG1.jpeg}
+        \caption{DAG 1}
+        \label{fig:dag1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.31\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{DAG2.jpeg}
+        \caption{DAG 2}
+        \label{fig:dag2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.31\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{DAG3.jpeg}
+        \caption{DAG 3}
+        \label{fig:dag3}
+    \end{subfigure}
+
+    \caption{Grafos acíclicos dirigidos propuestos para representar las relaciones 
+    de dependencia entre las variables de interés.}
+    \label{fig:dags}
+\end{figure}
+
+\subsection{Validación de los modelos}
+
+Para determinar cuál de las tres estructuras propuestas representaba mejor los 
+datos, los modelos fueron comparados mediante los criterios AIC y BIC utilizando 
+las funciones implementadas en el paquete \texttt{bnlearn}.
+
+\begin{table}[H]
+\centering
+\caption{Comparación de los DAG propuestos mediante BIC y AIC.}
+\label{tab:aicbic}
+\begin{tabular}{lcc}
+\toprule
+Modelo & BIC & AIC \\
+\midrule
+DAG 1 & [-5547.98] & [-4678.218] \\
+DAG 2 & [-13916.51] & [-7193.286] \\
+DAG 3 & [-6233.563] & [-4816.989] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Con esta información podemos concluir que el modelo de la DAG 1 es el que mejor
+ajusta las relaciones de dependencia de nuestras variables categóricas
+
+\subsection{Creación de una DAG mediante "Hill climbing"}
+
+Adicional a los 3 DAG realizados, se utilizó el algoritmo de \texttt{hill climbing} 
+dentro de \texttt{bnlearn} para hacer el mejor modelo estadístico.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{BESTDAG.jpeg}
+    \caption{DAG hecha con el algoritmo "Hill climbing"}
+    \label{bestdag}
+\end{figure}
+
+Sin embargo, este modelo fue descartado rápidamente debido a la poca dependencia que hay 
+entre las variables de interés.
+
+\subsection{Consultas probabilísticas}
+
+\subsubsection{Percepción de rapidez según el tamaño de la localidad}
+
+La primera consulta evaluó si la percepción de rapidez del transporte presentaba 
+diferencias entre habitantes de localidades clasificadas como urbanas y aquellos 
+pertenecientes al resto de las localidades consideradas en el análisis. Para ello 
+se construyó un indicador de percepción de rapidez a partir de las evaluaciones 
+de diferentes medios de transporte.
+
+La probabilidad estimada de reportar una buena percepción de rapidez fue de 
+$0.6682$ para el grupo clasificado como urbano y de $0.7271$ para el grupo 
+clasificado como rural. Los resultados muestran, por lo tanto, una mayor 
+probabilidad de evaluar favorablemente la rapidez del transporte dentro del 
+segundo grupo. Este resultado sugiere que el contexto territorial puede estar asociado con la 
+percepción del funcionamiento de los medios de transporte.
+
+
+\subsubsection{Escolaridad y percepción de eficiencia}
+
+La segunda consulta analizó la relación entre escolaridad y percepción de eficiencia 
+del transporte público. La escolaridad fue agrupada en dos categorías, básica y 
+alta, mientras que la percepción fue clasificada como eficiente o ineficiente.
+
+La probabilidad de considerar eficiente al transporte fue de $0.6440$ entre las 
+personas clasificadas con escolaridad básica y de $0.5897$ entre aquellas con 
+escolaridad alta. Contrario a la hipótesis de que una mayor escolaridad estaría 
+asociada con una mejor percepción de eficiencia, los datos mostraron una 
+probabilidad mayor de evaluación favorable dentro del grupo con escolaridad básica.
+
+\subsubsection{Uso del transporte y percepción de eficiencia}
+
+La tercera consulta evaluó si la percepción de eficiencia cambia entre las personas 
+que utilizan habitualmente los medios de transporte considerados y aquellas que 
+no presentan este patrón de uso.
+
+Entre las personas clasificadas como usuarias, la probabilidad de considerar 
+eficiente al transporte fue de $0.6612$. En contraste, para las personas 
+clasificadas como no usuarias la probabilidad obtenida fue de $0.4560$.
+
+Este resultado muestra una diferencia muy 
+marcada entre los grupos analizados. Por lo tanto se puede concluir que 
+la experiencia de uso se encuentra asociada con la percepción de eficiencia 
+del transporte dentro de la muestra. 
+
+
+\subsubsection{Condición física y uso cotidiano del automóvil}
+
+La cuarta consulta estudió la relación entre condición física y frecuencia de uso 
+del automóvil dentro del subconjunto correspondiente a las localidades de mayor 
+tamaño.
+
+La probabilidad estimada de utilizar el automóvil cotidianamente fue de $0.5972$ 
+para las personas clasificadas con incapacidad y de $0.7326$ para aquellas sin 
+incapacidad. Aunque los valores obtenidos muestran diferencias descriptivas entre 
+ambos grupos, el tamaño de muestra disponible para esta comparación fue insuficiente.
+
+
+\begin{table}[H]
+\centering
+\caption{Resultados de las consultas probabilísticas.}
+\label{tab:queries}
+\begin{tabular}{p{6cm}lc}
+\toprule
+Consulta & Evidencia & Probabilidad \\
+\midrule
+
+Buena percepción de rapidez 
+& Localidad urbana & 0.6682 \\
+
+& Localidad rural & 0.7271 \\
+\midrule
+
+Percepción de transporte eficiente 
+& Escolaridad básica & 0.6440 \\
+
+& Escolaridad alta & 0.5897 \\
+\midrule
+
+Percepción de transporte eficiente 
+& Usuario & 0.6612 \\
+
+& No usuario & 0.4560 \\
+\midrule
+
+Uso cotidiano del automóvil 
+& Con incapacidad & 0.5972 \\
+
+& Sin incapacidad & 0.7326 \\
+
+\bottomrule
+\end{tabular}
+\end{table}
+
+Los resultados obtenidos muestran que las características territoriales, educativas 
+y de uso del transporte se encuentran asociadas con cambios en las probabilidades 
+de percepción y utilización de los distintos medios considerados. En particular, 
+la experiencia de uso presentó una relación importante con la percepción de 
+eficiencia, mientras que la escolaridad mostró un comportamiento diferente al 
+planteado inicialmente.
+
+Las redes bayesianas permitieron representar estas relaciones dentro de un modelo 
+probabilístico y responder preguntas condicionadas a diferentes tipos de evidencia. 
+A diferencia de una comparación exclusivamente descriptiva, este enfoque permite 
+actualizar la probabilidad de una variable de interés a partir de las características 
+observadas en otros nodos de la red.
+
+No obstante, los resultados deben interpretarse como asociaciones probabilísticas 
+y no como efectos causales. Las estructuras utilizadas fueron construidas a partir 
+de hipótesis de dependencia y datos observacionales, por lo que la presencia de un 
+arco entre dos variables no demuestra que una de ellas cause directamente a la otra.
+
 \section{Conclusiones}\label{Conclusiones}
 
-\bibliography{references}
+\printbibliography
 
 
 \end{document}
