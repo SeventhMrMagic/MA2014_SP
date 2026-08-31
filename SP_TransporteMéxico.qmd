@@ -242,7 +242,121 @@ print(var1)
 ```{r}
 c("p17_2","usa_TP","p32") %in% colnames(data)
 ```
+###1. ¿Existe diferencia en la percepción sobre la rapidez del transporte público entre las personas que viven en municipios capitales y aquellas que viven en localidades rurales?
+##Sí existe diferencia, según lo que se mostrará a continuación, las personas que viven en localidades rurales lo perciben más rápido. 
+#[1] 0.6682004 Urbano
+#[1] 0.7270764 Rural
 
+
+```{r}
+
+data$sumrap <- data$p1c_2_1 + data$p1c_3_1 + data$p1c_4_1 +data$p1c_7_1
+data$cuantos<- (data$p1c_2_1 != 0) + (data$p1c_3_1 != 0) + (data$p1c_4_1 != 0) + (data$p1c_7_1 != 0)
+data$promra   <- data$sumrap / data$cuantos
+
+data$percepcion_rapidez <- ifelse(data$promra >= 1.5, "Buena", "Mala")
+data$percepcion_rapidez <- factor(data$percepcion_rapidez)
+
+data$L <- ifelse(data$Tam_loc == 1, "Urbano", "Rural")
+data$L <- factor(data$L)
+
+
+
+```
+
+```{r}
+dag_q1 <- empty.graph(nodes = c("L", "percepcion_rapidez"))
+arc_q1 <- matrix(c("L", "percepcion_rapidez"), byrow = TRUE, ncol = 2, dimnames = list(NULL, c("from","to")))
+arcs(dag_q1) <- arc_q1
+
+datos_q1 <- na.omit(data[, c("L", "percepcion_rapidez")])
+bn_q1 = bn.fit(dag_q1, data = datos_q1)
+```
+
+```{r}
+set.seed(42)
+cpquery(bn_q1, event = (percepcion_rapidez == "Buena"), evidence = (L == "Urbano"), n =10^6)
+cpquery(bn_q1, event = (percepcion_rapidez == "Buena"), evidence = (L == "Rural"), n = 10^6)
+```
+```{r}
+cpquery(bn_q1, event = (percepcion_rapidez == "Buena"), evidence = list(L = "Urbano"), method = "lw")
+cpquery(bn_q1, event = (percepcion_rapidez == "Buena"), evidence = list(L = "Rural"), method = "lw")
+```
+
+#####¿Mayor escolaridad se asocia a mejor percepción de eficiencia del transporte público?
+##Las personas con esolaridad más baja componen el porcentaje mayor a una mejor percepción hacia la eficiencia del transporte público, esto tiene sentido ya que los horarios escolares son mejores y hay más escuelas de nivel básico, por lo que puede ser un factor para no depender tanto del transporte público.
+##[1] 0.6440406 Escolaridad básica
+##[1] 0.5896719 Escolaridad Alta
+```{r}
+data$Esc <- ifelse(data$escol <= 3, "Basica", "Alta")
+data$Esc <- factor(data$Esc)
+
+data$Efi <- factor(data$p17_1, levels = c(1,2), labels = c("Eficiente","Ineficiente"))
+
+dag_q2 <- empty.graph(nodes = c("Esc", "Efi"))
+arcs(dag_q2) <- matrix(c("Esc","Efi"), ncol = 2, dimnames = list(NULL, c("from","to")))
+
+datos_q2 <- na.omit(data[, c("Esc", "Efi")])
+bn_q2 <- bn.fit(dag_q2, data = datos_q2)
+
+```
+```{r}
+set.seed(42)
+cpquery(bn_q2, event = (Efi== "Eficiente"), evidence = (Esc == "Basica"), n = 10^6)
+cpquery(bn_q2, event = (Efi== "Eficiente"), evidence = (Esc == "Alta"), n = 10^6)
+```
+```{r}
+cpquery(bn_q2, event = (Efi== "Eficiente"), evidence = list(Esc = "Basica"), method = "lw")
+cpquery(bn_q2, event = (Efi== "Eficiente"), evidence = list(Esc = "Alta"), method = "lw")
+```
+###¿Cómo cambia la percepción de eficiencia del transporte público entre la gente que transita en él y la gente que no?
+#Sí cambia la percepción y esto tiene mucho sentido, las personas que no lo suelen tomar no están acostumbradas, por lo que es más sencillo ver los problemas.
+#[1] 0.6612 Gente que transita en él
+#[1] 0.456 Gente que no transita en él
+
+```{r}
+data$TP <- ifelse(data$preferencia == 1, "Si", "No")
+data$TP <- factor(data$TP)
+
+dag_q3 <- empty.graph(nodes = c("TP", "Efi"))
+arcs(dag_q3) <- matrix(c("TP","Efi"), ncol = 2, dimnames = list(NULL, c("from","to")))
+
+datos_q3 <- na.omit(data[, c("TP", "Efi")])
+bn_q3 <- bn.fit(dag_q3, data = datos_q3)
+
+set.seed(42)
+cpquery(bn_q3, event = (Efi== "Eficiente"), evidence = (TP == "Si"), n = 10^6)
+cpquery(bn_q3, event = (Efi== "Eficiente"), evidence = (TP == "No"), n = 10^6)
+```
+```{r}
+cpquery(bn_q3, event = (Efi== "Eficiente"), evidence = list(TP = "Si"), method = "lw")
+cpquery(bn_q3, event = (Efi== "Eficiente"), evidence = list(TP = "No"), method = "lw")
+
+```
+###¿La condición física de una persona impacta en la frecuencia del uso de automóvil en las grandes ciudades?
+#####IMPORTANTE: el tamaño de muestra es insuficiente para una conclusión estadísticamente correcta, por lo que no debemos de hacer una conclusión.
+#[1] 0.5972
+#[1] 0.7326
+```{r}
+grandesC <- data[data$Tam_loc == 1,]
+###Inc = Incapacidad
+grandesC$Inc  <- factor(ifelse(grandesC$p12a_1 == 4, "Si", "No"))
+grandesC$Auto <- factor(grandesC$p1a_12, levels = c(1,2,3), labels = c("Cotidiano","Ocasional","Nunca"))
+
+dag_q4 <- empty.graph(nodes = c("Inc", "Auto"))
+arcs(dag_q4) <- matrix(c("Inc","Auto"), ncol = 2, dimnames = list(NULL, c("from","to")))
+
+datos_q4 <- na.omit(grandesC[, c("Inc", "Auto")])
+bn_q4 <- bn.fit(dag_q4, data = datos_q4)
+
+set.seed(42)
+cpquery(bn_q4, event = (Auto == "Cotidiano"), evidence = (Inc == "Si"), n = 10^6)
+cpquery(bn_q4, event = (Auto == "Cotidiano"), evidence = (Inc == "No"), n = 10^6)
+```
+```{r}
+cpquery(bn_q4, event = (Auto == "Cotidiano"), evidence = list(Inc = "Si"), method = "lw")
+cpquery(bn_q4, event = (Auto == "Cotidiano"), evidence = list(Inc = "No"), method = "lw")
+```
 
 
 
