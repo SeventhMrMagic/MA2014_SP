@@ -11,20 +11,23 @@
 \usepackage{xcolor}
 \usepackage{amsmath,amssymb}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
-\usepackage{iftex}
-\ifPDFTeX
-  \usepackage[T1]{fontenc}
-  \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provide euro and other symbols
-\else % if luatex or xetex
-  \usepackage{unicode-math} % this also loads fontspec
-  \defaultfontfeatures{Scale=MatchLowercase}
-  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
-\fi
-\usepackage{lmodern}
-\ifPDFTeX\else
-  % xetex/luatex font selection
-\fi
+
+\usepackage{fontspec}
+\usepackage{unicode-math}
+
+% Fuente principal
+\setmainfont{Times New Roman}
+
+% Fuente matemática compatible
+\setmathfont{TeX Gyre Termes Math}
+
+% Hacer que KOMA-Script también use la fuente romana
+% en títulos y encabezados
+\setkomafont{disposition}{\rmfamily\bfseries}
+\setkomafont{title}{\rmfamily\bfseries}
+\setkomafont{author}{\rmfamily}
+\setkomafont{date}{\rmfamily}
+
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \IfFileExists{microtype.sty}{% use microtype if available
@@ -153,7 +156,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={Situación problema: Transporte en México},
+  pdftitle={Artículo 1: Redes bayesianas multinomiales},
   colorlinks=true,
   linkcolor={blue},
   filecolor={Maroon},
@@ -162,29 +165,38 @@
   pdfcreator={LaTeX via pandoc}}
 
 
-\title{Situación problema: Transporte en México}
-\author{}
-\date{}
+\title{Uso de Redes Bayesianas multinomiales para la comprensión del uso, seguridad y eficiencia de los medios de transporte en México usando la Encuesta Nacional de Movilidad y Transporte}
+
+\author{
+Jessica Milagros Cordero Rivera
+\and
+Diego Rodrigo González Ramírez
+\and
+Jose Ángel Lechuga Carrasco
+\and
+Julio Lizárraga Beltrán
+}
+
+
+\date{30/08/2026}
 \begin{document}
 \maketitle
 
 
-\subsection{Quarto}\label{quarto}
 
-Quarto enables you to weave together content and executable code into a
-finished document. To learn more about Quarto see
-\url{https://quarto.org}.
+\begin{abstract}
+a
+\end{abstract}
 
-\subsection{Running Code}\label{running-code}
 
-When you click the \textbf{Render} button a document will be generated
-that includes both content and the output of embedded code. You can
-embed code like this:
 
-You can add options to executable code like this
+\section{Introducción}\label{Introducción}
 
-The \texttt{echo:\ false} option disables the printing of code (only
-output is displayed).
+\section{Metodología}\label{Metodología}
+
+\section{Aplicación}\label{Aplicación}
+
+\section{Conclusiones}\label{Conclusiones}
 
 
 
