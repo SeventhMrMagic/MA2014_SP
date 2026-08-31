@@ -12,7 +12,7 @@
 \usepackage{amsmath,amssymb}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 
-\usepackage{fontspec}
+
 \usepackage{unicode-math}
 
 % Fuente principal
@@ -173,6 +173,7 @@
 
 
 
+
 \title{Uso de Redes Bayesianas multinomiales para la comprensión del uso, seguridad y eficiencia de los medios de transporte en México usando la Encuesta Nacional de Movilidad y Transporte}
 
 \author{
@@ -187,9 +188,9 @@ Julio Lizárraga Beltrán
 
 
 \date{30/08/2026}
+
 \begin{document}
 \maketitle
-
 
 
 \begin{abstract}
@@ -223,6 +224,25 @@ urbana han sido estudiados y confirmados previamente:
 
 
 \section{Metodología}\label{Metodología}
+\subsection{Enfoque y tipo de estudio}
+Se empleó un enfoque cuantitativo, no experimental, basado en el uso de redes bayesianas (grafos acíclicos dirigidos, DAG) para encontrar las relaciones de dependencia probabilística entre variables sociodemográficas, geográficas y de percepción sobre el transporte.
+
+\subsection{Fuente de datos}
+El Instituto de Investigaciones Jurídicas de la UNAM realizó la Encuesta Nacional de Movilidad y Transporte. Esta encuesta nacional fue la base de datos que utilizamos, la encuesta cuenta con aproximadamente 1200 respuestas de distintas partes del pais. Entre las variables relevantes para este estdio se  encuentran región (\texttt{Region}), tamaño de localidad (\texttt{Tam\_loc}), escolaridad (\texttt{escol}), ingreso individual y familiar (\texttt{ing\_ind}, \texttt{ing\_fam}), ocupación (\texttt{h21\_1}), frecuencia de uso por modo de transporte (\texttt{p1a\_*}), calificación de rapidez por modo (\texttt{p1c\_*\_1}), motivo de abandono del automóvil (\texttt{p12a\_1}) y percepción de eficiencia del transporte público (\texttt{p17\_1}).
+
+\subsection{Herramientas}
+El análisis se realizó en \texttt{RStudio} mediante un documento Quarto, utilizando los paquetes \texttt{bnlearn} y \texttt{dplyr} de R.
+
+\subsection{Preprocesamiento}
+Las variables continuas de ingreso y rapidez fueron recodificadas en categorías binarias con base en la media de las respuestas válidas, tratando como no respuesta los valores atípicos. Se construyó la variable \texttt{preferencia}, correspondiente al modo de transporte más utilizado por cada persona, y se convirtió el conjunto de datos a variables categóricas (\texttt{factor}) para su análisis con redes bayesianas.
+
+\subsection{Construcción y selección del modelo global}
+Se propusieron tres DAGs alternativos que representan distintas hipótesis de dependencia entre las variables de interés. Cada red fue ajustada utilizando la funcion de bnlearn \texttt{bn.fit()} y evaluada con los criterios de información BIC y AIC mediante (\texttt{score()}), además de una validación estructural con el algoritmo de aprendizaje \textit{hill-climbing} (\texttt{hc()}) del paquete bnlearn, seleccionando la estructura con mejor ajuste
+a los datos, dentro de Rstudio se trata del valor menos negativo.
+
+\subsection{Estrategia analítica por pregunta de investigación}
+Para cada pregunta se utilizo un DAG distinto tomando en cuenta lo que nos interesaba saber, se ajstaron con \texttt{bn.fit()} y se encontraron probabilidades condicionales con \texttt{cpquery()} (utilizando una \(n=10^{6}\) y verificado con ponderación por
+verosimilitud, \texttt{method="lw"}).
 
 \section{Aplicación}\label{Aplicación}
 
