@@ -272,6 +272,29 @@ que ayude a desarrollar políticas sobre planificación urbana.
 
 \section{Metodología}\label{Metodología}
 
+
+\subsection{Enfoque y tipo de estudio}
+Se empleó un enfoque cuantitativo, no experimental, basado en el uso de redes bayesianas (grafos acíclicos dirigidos, DAG) para encontrar las relaciones de dependencia probabilística entre variables sociodemográficas, geográficas y de percepción sobre el transporte.
+
+\subsection{Fuente de datos}
+El Instituto de Investigaciones Jurídicas de la UNAM realizó la Encuesta Nacional de Movilidad y Transporte. Esta encuesta nacional fue la base de datos que utilizamos, la encuesta cuenta con aproximadamente 1200 respuestas de distintas partes del pais. Entre las variables relevantes para este estdio se  encuentran región (\texttt{Region}), tamaño de localidad (\texttt{Tam\_loc}), escolaridad (\texttt{escol}), ingreso individual y familiar (\texttt{ing\_ind}, \texttt{ing\_fam}), ocupación (\texttt{h21\_1}), frecuencia de uso por modo de transporte (\texttt{p1a\_*}), calificación de rapidez por modo (\texttt{p1c\_*\_1}), motivo de abandono del automóvil (\texttt{p12a\_1}) y percepción de eficiencia del transporte público (\texttt{p17\_1}).
+
+\subsection{Herramientas}
+El análisis se realizó en \texttt{RStudio} mediante un documento Quarto, utilizando los paquetes \texttt{bnlearn} y \texttt{dplyr} de R.
+
+\subsection{Preprocesamiento}
+Las variables continuas de ingreso y rapidez fueron recodificadas en categorías binarias con base en la media de las respuestas válidas, tratando como no respuesta los valores atípicos. Se construyó la variable \texttt{preferencia}, correspondiente al modo de transporte más utilizado por cada persona, y se convirtió el conjunto de datos a variables categóricas (\texttt{factor}) para su análisis con redes bayesianas.
+
+\subsection{Construcción y selección del modelo global}
+Se propusieron tres DAGs alternativos que representan distintas hipótesis de dependencia entre las variables de interés. Cada red fue ajustada utilizando la funcion de bnlearn \texttt{bn.fit()} y evaluada con los criterios de información BIC y AIC mediante (\texttt{score()}), además de una validación estructural con el algoritmo de aprendizaje \textit{hill-climbing} (\texttt{hc()}) del paquete bnlearn, seleccionando la estructura con mejor ajuste
+a los datos, dentro de Rstudio se trata del valor menos negativo.
+
+\subsection{Estrategia analítica por pregunta de investigación}
+Para cada pregunta se utilizo un DAG distinto tomando en cuenta lo que nos interesaba saber, se ajstaron con \texttt{bn.fit()} y se encontraron probabilidades condicionales con \texttt{cpquery()} (utilizando una \(n=10^{6}\) y verificado con ponderación por
+verosimilitud, \texttt{method="lw"}).
+
+
+
 \section{Aplicación}\label{Aplicación}
 
 \subsection{Descripción y preparación de los datos}
@@ -469,18 +492,39 @@ la experiencia de uso presentó una relación importante con la percepción de
 eficiencia, mientras que la escolaridad mostró un comportamiento diferente al 
 planteado inicialmente.
 
-Las redes bayesianas permitieron representar estas relaciones dentro de un modelo 
+Las RBM permitieron representar estas relaciones dentro de un modelo 
 probabilístico y responder preguntas condicionadas a diferentes tipos de evidencia. 
 A diferencia de una comparación exclusivamente descriptiva, este enfoque permite 
 actualizar la probabilidad de una variable de interés a partir de las características 
 observadas en otros nodos de la red.
 
-No obstante, los resultados deben interpretarse como asociaciones probabilísticas 
+Sin embargo, los resultados deben interpretarse como relaciones probabilísticas 
 y no como efectos causales. Las estructuras utilizadas fueron construidas a partir 
 de hipótesis de dependencia y datos observacionales, por lo que la presencia de un 
 arco entre dos variables no demuestra que una de ellas cause directamente a la otra.
 
 \section{Conclusiones}\label{Conclusiones}
+
+El análisis mediante RBM permitió identificar relaciones relevantes 
+entre características geográficas, educativas y de uso del transporte con la 
+percepción de su rapidez y eficiencia. Entre los principales hallazgos, las localidades 
+clasificadas como rurales presentaron una mayor probabilidad de percibir favorablemente 
+la rapidez del transporte; las personas con escolaridad básica mostraron una mejor 
+percepción de eficiencia que aquellas con escolaridad alta; y los usuarios habituales 
+del transporte presentaron una percepción considerablemente más favorable de su 
+eficiencia que los no usuarios. En contraste, la relación entre condición física y 
+uso cotidiano del automóvil no pudo establecerse con suficiente confianza debido al 
+tamaño limitado de la muestra disponible para este grupo.
+
+Estos resultados muestran la utilidad de la RBM para estudiar las relaciones entre 
+múltiples variables categóricas asociadas con la 
+movilidad en México y generar evidencia potencialmente útil para la planificación 
+urbana. Sin embargo, al tratarse de datos observacionales, los resultados deben interpretarse como asociaciones 
+y no como relaciones causales. Como trabajo futuro, se propone ampliar el tamaño de la 
+muestra, incorporar nuevas variables relacionadas con accesibilidad, seguridad y 
+características geográficas, y validar los modelos con nuevas bases de datos que 
+permitan obtener estimaciones estadísticamente más significantes.
+
 
 \printbibliography
 
